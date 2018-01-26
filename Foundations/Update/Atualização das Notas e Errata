@@ -1,0 +1,21 @@
+#!/bin/sh
+
+
+
+
+
+#Logged user
+USER_NAME=`whoami`
+
+# Notes database path
+PATH="/Users/$USER_NAME/Library/Containers/com.apple.iBooksX/Data/Documents/AEAnnotation/"
+
+#Move to Transferred path
+FROM_PATH="/Users/$USER_NAME/Downloads/Foundations/Update"
+
+
+echo "Atualizando notas e erratas..."
+
+/bin/cp -f $FROM_PATH/AE* $PATH
+
+echo "Atualização completa!"
