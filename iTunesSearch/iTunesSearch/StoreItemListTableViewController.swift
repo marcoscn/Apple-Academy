@@ -29,9 +29,9 @@ class StoreItemListTableViewController: UITableViewController {
         if !searchTerm.isEmpty {
             
             // set up query dictionary
-            var queryDic: [String: String] = [
+            let queryDic: [String: String] = [
                 "term": searchTerm,
-                "media": filterSegmentedControl,
+                "media": mediaType,
                 "lang": "en-us",
                 "limit": "10"]
             
@@ -40,6 +40,7 @@ class StoreItemListTableViewController: UITableViewController {
                 DispatchQueue.main.async{
                     if let items = storeItemController{
                         self.items = items
+                        self.tableView.reloadData()
                     } else {
                         print("Deu ruim")
                     }
@@ -57,16 +58,30 @@ class StoreItemListTableViewController: UITableViewController {
         
         let item = items[indexPath.row]
         
-        cell.textLabel?.text = item.name
-        
         // set label to the item's name
+        cell.textLabel?.text = item.name
         // set detail label to the item's subtitle
+        cell.detailTextLabel?.text = item.artist
         // reset the image view to the gray image
-        
+        cell.imageView?.image = UIImage(named: "gray")
         // initialize a network task to fetch the item's artwork
-        // if successful, use the main queue capture the cell, to initialize a UIImage, and set the cell's image view's image to the 
+        // if successful, use the main queue capture the cell, to initialize a UIImage, and set the cell's image view's image to the
+        let task = URLSession.shared.dataTask(with: item.artworkURL,
+                                              completionHandler: { (data, response, error) in
+                                                if let data = data,
+                                                    let image = UIImage(data: data){
+                                                    DispatchQueue.main.async {
+                                                        cell.imageView?.image = image
+                                                    }
+                                                }
+                                                
+        })
         // resume the task
+        task.resume()
+
     }
+    
+    
     
     @IBAction func filterOptionUpdated(_ sender: UISegmentedControl) {
         
